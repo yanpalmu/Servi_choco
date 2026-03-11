@@ -80,7 +80,9 @@ nav.scrolled { background:rgba(5,16,10,.92); backdrop-filter:blur(20px); border-
 .n-card p { font-size:.8rem; color:var(--texto-dim); line-height:1.6; }
 .n-card.tall { grid-row:span 2; }
 
-#destinos { background:var(--selva); }
+#destinos { background:var(--selva); position:relative; overflow:hidden; background-image:url('../imagenes/IMG_20230727_161222.jpg'); background-size:cover; background-position:center; background-attachment:fixed; }
+#destinos::before { content:''; position:absolute; inset:0; background:rgba(13,36,24,0.88); z-index:0; }
+#destinos .container { position:relative; z-index:1; }
 .destinos-intro { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:4rem; gap:2rem; }
 .destinos-intro p { max-width:400px; color:var(--texto-dim); line-height:1.8; font-size:.95rem; }
 .destinos-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; }
