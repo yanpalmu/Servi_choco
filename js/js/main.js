@@ -1,103 +1,139 @@
-// 1. Datos de los Destinos
-const destinations = [
-  { 
-    name: 'Tutunendo', tag: 'Cuenca del Atrato', 
-    img: './imagenes/tutunendo.jpg', 
-    desc: 'Experiencia de inmersión en la selva pluvial. Restauración de senderos y protección de aguas cristalinas.',
-    phone: '573100000000' 
-  },
-  { 
-    name: 'Bajo Baudó', tag: 'Ecosistema Manglar', 
-    img: './imagenes/ALto_Baudo.jpeg', 
-    desc: 'Liderado por jóvenes locales, protegemos el corredor biológico donde el río se une con el mar.',
-    phone: '573200000000' 
-  },
-  { 
-    name: 'Bahía Solano', tag: 'Pacífico Norte', 
-    img: './imagenes/bahia.jpg', 
-    desc: 'Turismo científico y avistamiento responsable. Generando valor para la comunidad costera.',
-    phone: '573000000000' 
+// js/utils.js puede contener utilidades como query, modales, etc.
+// Asegúrate de incluir este archivo antes de usar en main.js si decides separarlo.
+
+(function(){
+  // State
+  const state = {
+    musicOn: false,
+    currentSong: 0,
+    songs: [
+      // Puedes enlazar a archivos reales si los tienes
+      { name: 'Sonidos del Chocó', src: '' },
+    ],
+  };
+
+  // Reproductor simple (sin fuente de audio real aquí; placeholder)
+  window.toggleMusic = function() {
+    state.musicOn = !state.musicOn;
+    const btn = document.getElementById('music-toggle');
+    const icon = document.getElementById('music-icon');
+    if(state.musicOn){
+      icon.textContent = '❚❚';
+      btn.setAttribute('aria-label','Pausar música');
+      // Aquí podrías iniciar un Audio(ctx) si tienes fuente
+    } else {
+      icon.textContent = '▶';
+      btn.setAttribute('aria-label','Reproducir música');
+      // Detener audio
+    }
+  };
+
+  window.prevSong = function() { /* placeholder */ };
+  window.nextSong = function() { /* placeholder */ };
+
+  // Contadores
+  function animateCounter(el, target){
+    const duration = 1200;
+    const start = 0;
+    const delta = target - start;
+    let t0 = null;
+    function step(ts){
+      if(!t0) t0 = ts;
+      const p = Math.min((ts - t0) / duration, 1);
+      el.textContent = Math.floor(start + delta * p);
+      if(p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
   }
-];
 
-// 2. Renderizado de Tarjetas
-function renderCards(data) {
-  const container = document.getElementById('destContainer');
-  if (!container) return;
-  
-  container.innerHTML = data.map(d => `
-    <div class="dest-card">
-      <div style="background-image: url('${d.img}'); height: 250px; background-size: cover; background-position: center;"></div>
-      <div style="padding: 1.5rem;">
-        <span style="color:var(--accent); font-size:0.7rem; font-weight:600; text-transform:uppercase; border: 1px solid var(--accent); padding: 2px 8px; border-radius: 10px;">${d.tag}</span>
-        <h3 style="font-family:'Cormorant Garamond'; font-size:1.8rem; margin:15px 0;">${d.name}</h3>
-        <p style="color:var(--text-dim); font-size:0.9rem; margin-bottom:1.5rem;">${d.desc}</p>
-        <a href="https://wa.me/${d.phone}?text=Hola SERVI_CHOCO, quiero info de ${d.name}" 
-           target="_blank"
-           style="display:block; text-align:center; padding:12px; background:var(--accent); color:white; text-decoration:none; border-radius:30px; font-weight:600; transition: 0.3s;">
-           Reservar Experiencia
-        </a>
-      </div>
-    </div>
-  `).join('');
-}
-
-// 3. Función de Contadores
-const startCounters = () => {
-    const counters = document.querySelectorAll('.counter');
-    const speed = 200;
-
-    counters.forEach(counter => {
-        const updateCount = () => {
-            const target = +counter.getAttribute('data-target');
-            const count = +counter.innerText;
-            const inc = target / speed;
-
-            if (count < target) {
-                counter.innerText = Math.ceil(count + inc);
-                setTimeout(updateCount, 15);
-            } else {
-                counter.innerText = target;
-            }
-        };
-        updateCount();
+  // Reveal animation (simplificado)
+  const reveals = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        e.target.classList.add('in-view');
+      }
     });
-};
+  }, { threshold: 0.15 });
 
-// 4. Inicialización al cargar el DOM
-document.addEventListener('DOMContentLoaded', () => {
-    renderCards(destinations);
+  reveals.forEach(r => obs.observe(r));
 
-    // Lógica Menú Móvil
-    const menu = document.querySelector('#mobile-menu');
-    const menuLinks = document.querySelector('.nav-links');
+  // Cotización
+  window.cotizar = function() {
+    const destino = document.getElementById('f-destino').value;
+    const llegada = document.getElementById('f-llegada').value;
+    const salida  = document.getElementById('f-salida').value;
+    const viajeros = document.getElementById('f-viajeros').value;
+    const tipo = document.getElementById('f-tipo').value;
 
-    if (menu) {
-        menu.addEventListener('click', () => {
-            menu.classList.toggle('is-active');
-            menuLinks.classList.toggle('active');
-        });
+    const errores = [];
+    if(!destino) errores.push('Selecciona un destino.');
+    if(!llegada) errores.push('Indica la fecha de llegada.');
+    if(!salida) errores.push('Indica la fecha de salida.');
+    if(llegada && salida && llegada > salida) errores.push('La llegada debe ser anterior a la salida.');
+    if(!viajeros) errores.push('Selecciona la cantidad de viajeros.');
+
+    const panel = document.getElementById('cotizacion-result');
+    if(errores.length){
+      panel.innerHTML = `<div class="error" role="alert" style="color:#c0392b;">${errores.join('<br/>')}</div>`;
+      return;
     }
 
-    // Cerrar menú al hacer clic en un enlace
-    document.querySelectorAll('.nav-links a').forEach(link => {
-        link.addEventListener('click', () => {
-            menu?.classList.remove('is-active');
-            menuLinks?.classList.remove('active');
-        });
+    // Cálculo simple (ejemplo)
+    const base = 200;
+    const factor = tipo === 'premium' ? 1.5 : tipo === 'aventura' ? 1.8 : 1;
+    const precio = base * parseInt(viajeros,10) * factor;
+    const html = `
+      <div class="result-card" aria-label="Cotización estimada">
+        <strong>Cotización estimada</strong><br/>
+        Destino: ${destino}<br/>
+        Fechas: ${llegada} a ${salida}<br/>
+        Viajeros: ${viajeros}<br/>
+        Tipo: ${tipo}<br/>
+        Precio estimado: USD ${precio.toFixed(2)}
+      </div>
+    `;
+    panel.innerHTML = html;
+  };
+
+  // Destinos (placeholder)
+  function renderDestinos() {
+    const grid = document.getElementById('destinos-grid');
+    // Si tienes un JSON, podrías fetch('datos/destinos.json')
+    const datos = [
+      { titulo: 'Nuquí — Ballenas & Surf', descripcion: 'Playas y avistamientos de ballenas', img: '' },
+      { titulo: 'Bahía Solano — Buceo', descripcion: 'Biodiversidad marina y manglares', img: '' },
+      { titulo: 'Tutunendo — Cascadas', descripcion: 'Ríos y cascadas exuberantes', img: '' }
+    ];
+    datos.forEach(d => {
+      const card = document.createElement('div');
+      card.className = 'destino-card';
+      card.innerHTML = `<h4>${d.titulo}</h4><p>${d.descripcion}</p>`;
+      grid.appendChild(card);
+    });
+  }
+
+  // Mapa listado
+  function renderMapaList() {
+    const list = document.getElementById('mapa-list');
+    const destinos = ['Nuquí', 'Bahía Solano', 'Tutunendo', 'Bajo Baudó', 'Istmina', 'Quibdó'];
+    destinos.forEach(d => {
+      const item = document.createElement('div');
+      item.className = 'mapa-item';
+      item.textContent = d;
+      list.appendChild(item);
+    });
+  }
+
+  // Inicialización
+  document.addEventListener('DOMContentLoaded', () => {
+    // Contadores iniciales
+    document.querySelectorAll('.stat-num').forEach(el => {
+      const target = parseInt(el.getAttribute('data-target'), 10);
+      if(!isNaN(target)) animateCounter(el, target);
     });
 
-    // Control de Animación de Contadores con Scroll
-    let started = false;
-    window.addEventListener('scroll', () => {
-        const section = document.querySelector('.impact-stats');
-        if (section) {
-            const rect = section.getBoundingClientRect();
-            // Inicia cuando la sección es visible en la pantalla
-            if (rect.top < window.innerHeight && !started) {
-                startCounters();
-                started = true;
-            }
-        }
-    });
-});
+    renderDestinos();
+    renderMapaList();
+  });
+})();
