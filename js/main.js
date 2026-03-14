@@ -1,5 +1,3 @@
-
-//////////////////////////////////////////////////////
 // CURSOR
 const cur=document.getElementById('cursor'),ring=document.getElementById('cursor-ring');
 document.addEventListener('mousemove',e=>{
