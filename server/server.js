@@ -17,6 +17,15 @@ const db = mysql.createPool({
   port: process.env.MYSQLPORT || 3306
 });
 
+db.getConnection()
+  .then(conn => {
+    console.log("✅ Conectado a MySQL");
+    conn.release();
+  })
+  .catch(err => {
+    console.error("❌ Error conectando a MySQL:", err);
+  });
+
 /* LOG DE PETICIONES */
 
 app.use((req,res,next)=>{
