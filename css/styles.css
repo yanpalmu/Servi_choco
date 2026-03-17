@@ -188,7 +188,7 @@ footer::before {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: url('imagenes/Alto_Baudo.jpeg');
+  background-image: url('../imagenes/Alto_Baudo.jpeg');
   background-size: cover;
   background-position: center 30%;
   opacity: 0.12;
@@ -680,3 +680,15 @@ footer > * { position: relative; z-index: 1; }
   transition: gap 0.3s;
 }
 .dest-card:hover .dest-ver-mas { letter-spacing: 0.15em; }
+
+nav a.active{
+  color:var(--dorado);
+}
+
+nav a.active::after{
+  content:"";
+  display:block;
+  height:2px;
+  background:var(--dorado);
+  margin-top:4px;
+}
