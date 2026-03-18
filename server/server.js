@@ -125,6 +125,6 @@ app.get("/destinos/:id", async (req,res)=>{
 ================================ */
 
 
-app.listen(PORT, () => {
-  console.log("Servidor corriendo en puerto " + PORT);
+app.listen(process.env.PORT || 3000, "0.0.0.0", () => {
+  console.log("Servidor corriendo en puerto " + (process.env.PORT || 3000));
 });
