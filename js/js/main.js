@@ -137,3 +137,116 @@
     renderMapaList();
   });
 })();
+
+// NAVBAR SCROLL
+const navbar = document.querySelector("nav");
+
+window.addEventListener("scroll", () => {
+  if(window.scrollY > 40){
+    navbar.classList.add("scrolled");
+  } else {
+    navbar.classList.remove("scrolled");
+  }
+});
+
+// HERO SLIDER
+
+const slidesData = [
+  {
+    img: "imagenes/IMG_20230424_160206.jpg",
+    text: "Guardianes del territorio"
+  },
+  {
+    img: "imagenes/IMG_20230727_161222.jpg",
+    text: "Ríos que conectan vida"
+  },
+  {
+    img: "imagenes/Alto_Baudo.jpeg",
+    text: "Selvas que sanan el mundo"
+  }
+];
+
+const slider = document.getElementById("hero-slider");
+const dynamicText = document.getElementById("hero-dynamic-text");
+
+let current = 0;
+
+// crear slides
+slidesData.forEach((s, i) => {
+  const div = document.createElement("div");
+  div.className = "hero-slide";
+  div.style.backgroundImage = `url(${s.img})`;
+  if(i === 0) div.classList.add("active");
+  slider.appendChild(div);
+});
+
+const slides = document.querySelectorAll(".hero-slide");
+
+/*******************************************************/
+// ===== NAV SCROLL EFECT =====
+// ===== PARALLAX HERO =====
+window.addEventListener('scroll', () => {
+  const scroll = window.scrollY;
+  const hero = document.querySelector('#hero');
+
+  if(hero){
+    hero.style.transform = `translateY(${scroll * 0.3}px)`;
+  }
+}); 
+
+// TEXTO TIPO ESCRITURA
+const text = "Guardianes del Territorio";
+let index = 0;
+
+function typingEffect(){
+  const el = document.querySelector('.line-small');
+  if(!el) return;
+
+  el.textContent = text.slice(0, index++);
+  if(index <= text.length){
+    setTimeout(typingEffect, 60);
+  }
+}
+
+typingEffect();
+
+/*****************COTIZACIÓN********************/
+
+// CALCULAR NOCHES AUTOMÁTICO
+const llegada = document.getElementById('f-llegada');
+const salida = document.getElementById('f-salida');
+const noches = document.getElementById('f-noches');
+const nochesManual = document.getElementById('f-noches-manual');
+
+function calcularNoches() {
+  if (!llegada.value || !salida.value) return;
+
+  const inicio = new Date(llegada.value);
+  const fin = new Date(salida.value);
+
+  if (fin <= inicio) {
+    noches.value = '';
+    return;
+  }
+
+  const diff = Math.ceil((fin - inicio) / (1000 * 60 * 60 * 24));
+  noches.value = diff;
+}
+
+// EVENTOS
+llegada.addEventListener('change', calcularNoches);
+salida.addEventListener('change', calcularNoches);
+
+// SI USA MANUAL
+nochesManual.addEventListener('input', () => {
+  if (nochesManual.value > 0) {
+    noches.value = nochesManual.value;
+  }
+});
+
+let dias = parseInt(document.getElementById('f-noches').value);
+
+// por si no hay cálculo automático
+if (!dias || dias <= 0) {
+  dias = Math.ceil((new Date(sal) - new Date(lleg)) / (864e5));
+}
